@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+
+<!-- Specify the hostname and port for the NameNode -->
+
+<configuration>
+  <property>
+    <name>fs.default.name</name>
+    <value>hdfs://hadoop-namenode:9000</value>
+  </property>
+</configuration>

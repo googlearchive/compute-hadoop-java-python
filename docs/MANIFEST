@@ -1,0 +1,20 @@
+cfg.py:                          shared config between local scripts, coordinators, and snitches
+start_setup.sh:                  a common instance script that drops root permissions
+util.py:                         misc shared
+
+coordinator/bootstrap.sh:        startup script for coordinator
+coordinator/coordinator.py:      REST wrapper around hadoop_cluster.py
+coordinator/hadoop_cluster.py:   library to launch and manage a Hadoop cluster
+
+hadoop/conf:                     Hadoop config files
+hadoop/bootstrap.sh:             startup script to setup disks and install things
+hadoop/jobtracker_snitch.py:     REST wrapper to manage the JobTracker and start MR jobs
+hadoop/namenode_snitch.py:       REST wrapper to manage the NameNode and interact with HDFS
+hadoop/slave_snitch.py:          REST wrapper to manage a Hadoop slave
+hadoop/setup_hadoop.py:          startup script to install Hadoop and launch the snitch
+
+java:                            an agent to forward data from Hadoop API to coordinator,
+                                 and a tool to transfer directly between GS and HDFS
+
+tools:                           drive everything from the command-line
+tools/common.py:                 client library to interact with the coordinator

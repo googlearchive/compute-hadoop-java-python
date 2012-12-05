@@ -1,0 +1,16 @@
+########
+# BUGS #
+########
+
+This is a simple demo intended to demonstrate the usage of Hadoop on Compute.
+As such, it is not completely bug-free.
+
+- If apt-get install, wget, or gsutil fails for the coordinator, the user will
+  simply observe the 'RUNNING' state for more than a few minutes in
+  tools/launch_coordinator.py. If it fails for another instance, the error will
+  manifest in the status returned by the coordinator.
+- A second coordinator.py sometimes gets launched, and then neither responds to
+  port 8888.
+- This system doesn't monitor for running instances rebooting/breaking;
+  in general, the transience of instances is unhandled.
+- See docs/SECURITY.

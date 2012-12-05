@@ -1,0 +1,25 @@
+User <-> Coordinator:
+  - Encrypted by HTTPS
+  - The coordinator authenticates the user based on a secret token created by
+    tools/gen_passwd.py. The secret is passed to the coordinator upon creation
+    and served via the metadata server, all of which are secure channels.
+  - WARNING: The user does NOT know they are talking to the true coordinator,
+    since the coordinator uses a self-signed certificate. For this reason, the
+    system is vulnerable to man-in-the-middle attacks.
+
+Coordinator <-> Snitch:
+  - Encrypted by HTTPS
+  - Authenticated by the source host's address. All instances have internal IPs
+    in the 10.* range.
+
+Hadoop nodes:
+  - All instances have external IPs. Only incoming ssh traffic is enabled by
+    the default firewall, for debugging.
+  - There is no extra security implemented on top of Hadoop.
+
+Service accounts:
+  - See https://developers.google.com/compute/docs/authentication for an
+    introduction to service accounts.
+  - The coordinator runs with RW Compute and Google Storage permissions.
+  - All slaves run with RO Google Storage permissions.
+  - The hadoop-namenode instance runs with RW Google Storage permissions.

@@ -1,0 +1,53 @@
+// This is a diagram showing interactions between components.
+// If you have graphviz installed, you can generate this with:
+// dot -Tpng architecture.gv > diagram.png
+
+digraph architecture {
+  graph [compound=true];
+
+  // legend for edges
+  fake1 [style=invisible];
+  fake2 [style=invisible];
+  fake3 [style=invisible];
+  fake4 [style=invisible];
+  fake1 -> fake2 [label="starts instance", color=red];
+  fake3 -> fake4 [label="waits for", color=blue];
+
+  user [label="user/GAE"];
+  subgraph cluster_compute {
+    label = "Compute instances";
+    coord [label="coordinator"];
+
+    subgraph cluster_hdfs {
+      label = "HDFS";
+      style = dotted;
+
+      nn [label="NameNode"];
+      jt [label="JobTracker"];
+      {rank=same; nn jt}
+
+      subgraph cluster_slaves {
+        label = "Hadoop slaves";
+        slave1 [label="slave"];
+        slave2 [label="slave"];
+        slave3 [label="slave"];
+        slave4 [label="slave"];
+        slave5 [label="slave"];
+      }
+    }
+  }
+
+  user -> coord [color=red];
+  user -> coord [label="makes requests and polls for status"];
+
+  coord -> nn [color=red];
+  coord -> jt [color=red];
+  coord -> slave1 [color=red, lhead=cluster_slaves];
+
+  jt -> nn [color=blue];
+  slave1 -> jt [color=blue, ltail=cluster_slaves];
+
+  gs [label="Google Storage"];
+  gs -> nn [label="imports data", lhead=cluster_hdfs];
+  nn -> gs [label="exports data", ltail=cluster_hdfs];
+}

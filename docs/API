@@ -1,0 +1,137 @@
+This document describes the API used by all agents running on Compute
+instances. Both APIs are transported over HTTPS.
+
+Note that you don't need to use this API directly; the tools included are
+sufficient to use the cluster. See docs/README.
+
+#####################
+# API - Coordinator #
+#####################
+
+The coordinator is an agent that controls the creation and management of all
+other instances. It serves as a delegate between user requests and the
+components of Hadoop. The coordinator runs on a Compute instance.
+
+# Authentication #
+
+All calls take a 'secret', which is a static string that the user sends to the
+coordinator upon startup via instance metadata. All calls are sent over HTTPS,
+with the coordinator using a self-signed certificate. Calls between the
+coordinator and other instances don't require the secret, since the internal
+network is secure. See docs/SECURITY for more details.
+
+# Calls #
+
+A "checked reply" is a JSON object: {'result': 'ok' or 'failed'}.
+
+GET /status
+  Should always return {'state': 'READY'}. Used to poll the Coordinator to know
+  when its startup is done, since launching the webserver is the last step
+  after startup.
+
+POST /hadoop/launch (num_slaves, secret)
+  Starts the process of creating other instances and setting up Hadoop. This
+  will create 2 (Hadoop masters) + num_slaves instances. Synchronously returns
+  a checked reply, but poll /status/cluster.
+
+POST /hadoop/add_slaves (num_slaves, secret)
+  Adds more slaves to a Hadoop cluster. Synchronously returns a checked reply,
+  but poll /status/cluster.
+
+POST /transfer (src, dst, secret)
+  src may be a HTTP or GS URL (in which case dst is an HDFS path, and this call
+  imports data into the cluster). Otherwise, if src is a HDFS path, then dst
+  should be a GS URL, and this call will export data out of the cluster.
+  Synchronously returns {'result': 'ok' or 'failed', 'src': orig src, 'dst':
+  orig dst, 'operation': id, 'state': eventually 'Done'}. Poll
+  /status/op/<id>.
+
+POST /job/clean (path, secret)
+  Recursively deletes data from the specified HDFS path. Synchronously returns
+  a checked reply.
+
+POST /job/submit (jar, job_args, secret)
+  jar must be an HDFS path uploaded previously. job_args is a JSONified list of
+  string arguments to be passed to the MapReduce job. Synchronously returns a
+  checked reply.
+
+POST /status/cluster (secret)
+  Synchronously returns {
+    'hadoop_staleness': number of seconds since last update from Hadoop
+    'hadoop_data': either empty {} or, once Hadoop is running, {
+      'mapTasks': number of running map tasks
+      'reduceTasks': number of running reduce tasks
+      'mapreduceNodes': number of slave instances that Hadoop sees
+      'jobs': a list of MapReduce past/current jobs, each a dictionary {
+                'elapsedSeconds': how long the job has been running
+                'id': Hadoop's internal job ID
+                'mapProgress': between 0.0 and 1.0
+                'reduceProgress': between 0.0 and 1.0
+                'status': see http://hadoop.apache.org/common/docs/stable/api/org/apache/hadoop/mapred/JobStatus.html
+              }
+    }
+    'operations': a dictionary of IDs to objects returned by /status/op/<id>
+    'errors': list of string messages describing instance failures
+    'state': either 'DOWN' (no other instances around), 'DOOMED' (in the
+             process of tearing down the cluster), 'BROKEN' (a Hadoop master
+             instance is BROKEN), 'DOWNLOADING' (Hadoop setup data is being
+             pushed to GS), 'LAUNCHING' (some instances are up, but the cluster
+             isn't functional yet), or 'READY' (Hadoop is ready for use; every
+             slave isn't necessarily ready).
+    'summary': a one-line description of the state of all instances
+    'instances': a dictionary mapping instance states to a list of instances in that
+                 state
+  }.
+
+POST /status/op/<id> (secret)
+  Synchronously returns the same objects that /transfer returns. Poll until
+  'state' is 'Done'.
+
+The following are internal calls; you shouldn't use them.
+
+POST /hadoop/status_update (data)
+  The Java HadoopMonitor agent will send this several times a minute. It will
+  include information about MapReduce jobs extracted from Hadoop's API. The
+  data is published through /status/cluster.
+
+POST /instance/report_fail (secret, name, msg)
+  When an instance experiences a problem with setup (installing Ubuntu or
+  Python packages, for instance), it propagates the error up to the
+  coordinator. Only when an instance's state becomes BROKEN is there a
+  permanent problem, though.
+
+POST /instance/op_status (secret, operation, state)
+  The instance performing a transfer operation uses this to report progress.
+
+##################
+# API - Snitches #
+##################
+
+A snitch runs on each Compute instance, aside from the coordinator's. It
+responds to commands from the coordinator by invoking a Hadoop program locally.
+
+# Calls #
+
+GET /status
+  The coordinator uses this to determine when an instance has finished its
+  startup scripts. Returns {'state': 'READY' or 'BROKEN'}.
+
+POST /start ()
+  For hadoop-jobtracker: starts the Hadoop JobTracker, returns a checked reply.
+  For a hadoop slave: starts the Hadoop DataNode and TaskTracker, returns a
+                      checked reply.
+  This call does not exist for hadoop-namenode; as part of its startup script,
+  it formats HDFS and starts the NameNode.
+
+POST /job/start (jar, args)
+  For the hadoop-jobtracker only. Starts a MapReduce job. jar is a HTTP or GS
+  URL, and args is a JSONified list of strings. Do not include the jar filename
+  as the first argument; it will be added automatically.
+
+POST /transfer (operation, src, dst)
+  Launches the GsHdfs Java tool to transfer data from src to dst, and send
+  status, keyed by the operation ID. src and dst can be HTTP, GS, or HDFS
+  paths, but exactly one must be an HDFS path.
+
+POST /clean (path)
+  CAUTION. Recursively deletes the specified path in HDFS.

@@ -1,0 +1,53 @@
+########
+# TODO #
+########
+
+Aside from fixing items in docs/BUGS, these are other possible future
+directions.
+
+# Support slave instances without external IP addresses
+
+Currently all instances use an external IP address to access the Internet. This
+requires a high quota of addresses. Instances need Internet access to install
+software. An alternative is to allow them access through a proxy, as described
+at https://developers.google.com/compute/docs/networking#proxyvm.
+
+# Hadoop 2.0 Alpha
+
+The new alpha release brings architectural changes to Hadoop and has an API
+exposing much more useful information about jobs.
+
+# Relieve pressure from hadoop-namenode and hadoop-jobtracker
+
+The hadoop-namenode instance runs the Java program to handle transfer requests
+in to and out of HDFS, for all transfers. Likewise, the hadoop-jobtracker
+downloads JARs and runs the job driver to submit jobs. There is no reason to
+run these operations on any particular instance. Any Hadoop instance in the
+cluster (namely, any except the coordinator) can perform these operations. The
+coordinator should dish out work round-robin.
+
+# Handle ephemeralness of instances
+
+Compute instances may be reset without warning. If an instance enters such a
+state and reboots, make sure the startup scripts don't do anything dangerous.
+Make the coordinator notice this event and have the slave re-enter the cluster.
+Handle failure of the coordinator instance. Possibly make the cluster less
+centralized and more self-assembling.
+
+# Misc
+
+- Have the coordinator generate custom hadoop/conf based on values in cfg.py
+- When an instance becomes BROKEN (due to too many failures at downloading or
+  installing some package, usually), delete the instance, wait a bit, and try
+  again.
+- Clean up log files: have less progress from downloads.
+- Investigate a fully decoupled launch. In every instance's startup script,
+  immediately begin the appropriate Hadoop daemons. Even if the NameNode isn't up
+  yet, if a DataNode is configured to keep retrying its connection, things may
+  eventually work out.
+- Failures in startup and bootstrap.sh scripts go undetected.
+- Handle errors from the Compute API more flexibly, such as reaching quota.
+- Prettyprint the data from Hadoop and info about operations in tools/status.py.
+- Utilize the TokenBucket class from GCE to insert/delete instances faster
+  while still obeying quota limits.
+- Tune GsHdfs to transfer at different buffer sizes, and investigate speedup.
