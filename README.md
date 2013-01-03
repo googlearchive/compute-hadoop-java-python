@@ -2,8 +2,9 @@ compute-hadoop-java-python
 ==========================
 
 This software demonstrates one way to create and manage a cluster of Hadoop nodes running on Google Compute Engine.############
-# Overview #
-############
+
+Overview
+--------
 
 This software demonstrates one way to create and manage a cluster of Hadoop
 nodes running on Google Compute Engine.
@@ -25,8 +26,8 @@ regular workstation or in AppEngine.
 
 1) Run the one-time setup
 
-$ chmod +x one_time_setup.sh
-$ ./one_time_setup.sh
+	$ chmod +x one_time_setup.sh
+	$ ./one_time_setup.sh
 
 (If you try to 'source one_time_setup.sh', 'set -e' will remain in effect after
 the script completes. This will cause your shell session to end if any command
