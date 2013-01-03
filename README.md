@@ -1,7 +1,7 @@
 compute-hadoop-java-python
 ==========================
 
-This software demonstrates one way to create and manage a cluster of Hadoop nodes running on Google Compute Engine.############
+This software demonstrates one way to create and manage a cluster of Hadoop nodes running on Google Compute Engine.
 
 Overview
 --------
@@ -20,9 +20,8 @@ Python library that provides a layer of abstraction over the process of
 launching and managing instances. The coordinator could also be run from a
 regular workstation or in AppEngine.
 
-##################
-# ONE-TIME SETUP #
-##################
+ONE-TIME SETUP
+--------------
 
 1) Run the one-time setup
 
@@ -33,9 +32,9 @@ regular workstation or in AppEngine.
 the script completes. This will cause your shell session to end if any command
 exits with non-zero status.)
 
-2) Set up firewalls
+2) Set up firewalls:
 
-$ gcutil addfirewall snitch --description="Let coordinator and snitches chatter." --allowed="tcp:8888"
+	$ gcutil addfirewall snitch --description="Let coordinator and snitches chatter." --allowed="tcp:8888"
 
 8888 is the default port set in cfg.py.
 
@@ -44,25 +43,26 @@ $ gcutil addfirewall snitch --description="Let coordinator and snitches chatter.
 - Set zone, machtype, image, and disk in tools/launch_coordinator.py
 - Set the GS bucket and your project ID in tools/common.py. You must set this
   bucket up too:
-  $ gsutil mb gs://bucket_name
+
+	$ gsutil mb gs://bucket_name
+
 - Edit hadoop/conf/hadoop-env.sh and tweak things like heap size.
 
-#####################
-# REGULAR OPERATION #
-#####################
+REGULAR OPERATION
+-----------------
 
 # Launching a Cluster #
 
 To launch a cluster, run:
 
-$ ./tools/launch_coordinator.py
-$ ./tools/begin_hadoop.py num_slaves
+	$ ./tools/launch_coordinator.py
+	$ ./tools/begin_hadoop.py num_slaves
 
 where num_slaves is the number of slave instances desired.
 Your cluster is ready to use once the Hadoop masters are up. You can wait
 for all of the slaves by manually polling the cluster status:
 
-$ ./tools/status.py
+	$ ./tools/status.py
 
 See below for an explanation of the states.
 
@@ -90,16 +90,20 @@ The following describes what the above scripts do:
 To run a TeraSort benchmark, run the following:
 
 Generate 1TB of data to sort:
-$ ./tools/job_terasort.py 1
+
+	$ ./tools/job_terasort.py 1
 
 Sort the data:
-$ ./tools/job_terasort.py 2
+
+	$ ./tools/job_terasort.py 2
 
 Validate the sort:
-$ ./tools/job_terasort.py 3
+
+	$ ./tools/job_terasort.py 3
 
 Watch progress here through Hadoop's UI
-$ ./tools/ui_links.py
+
+	$ ./tools/ui_links.py
 
 The following describes what the above scripts do:
 
@@ -126,22 +130,20 @@ To export data:
 
 To add more slaves to an existing cluster:
 
-$ ./tools/add_slaves.py num_slaves
+	$ ./tools/add_slaves.py num_slaves
 
 Although the slaves should become available to existing MapReduce jobs, data in
 HDFS will not automatically shifted to them without running a rebalancer.
 
 To export results from HDFS into Google Storage:
 
-$ ./tools/download_results.py /hdfs/path /gs/path
+	$ ./tools/download_results.py /hdfs/path /gs/path
 
 To destroy your cluster:
 
-$ ./tools/teardown.py
+	$ ./tools/teardown.py
 
-##########
 # STATES #
-##########
 
 tools/status.py reports a status for the cluster and for instances.
 
@@ -170,11 +172,9 @@ Cluster states:
   READY:       Hadoop is usable. Not all slaves may be HADOOP_READY, but enough
                are.
 
-#############
 # DEBUGGING #
-#############
 
 You can ssh into any instance. 'sudo su hadoop' will let you become the user
-that all agents run as. /home/hadoop/log_* may be useful.
+that all agents run as. `/home/hadoop/log_*` may be useful.
 
 You may have to change hadoop_url in cfg.py to reflect an active Apache mirror.
