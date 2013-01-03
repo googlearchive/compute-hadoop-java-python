@@ -146,33 +146,35 @@ To destroy your cluster:
 tools/status.py reports a status for the cluster and for instances.
 
 Instance states:
-  BROKEN:       The instance could not finish its startup script. The errors
-                will be propagated to the coordinator and listed in the status
-                of the cluster.
-  DOOMED:       The instance is scheduled for deletion.
-  NON_EXISTENT: The instance is scheduled to be created.
-  PROVISIONING: This is the first Compute state after creating an instance.
-  STAGING:      The instance's virtual machine is being set up.
-  RUNNING:      The instance is running, but its startup scripts have not yet
-                completed.
-  SNITCH_READY: The instance's startup scripts are done.
-  HADOOP_READY: The appropriate Hadoop daemons are running.
+
+    BROKEN:       The instance could not finish its startup script. The errors
+                  will be propagated to the coordinator and listed in the status
+                  of the cluster.
+    DOOMED:       The instance is scheduled for deletion.
+    NON_EXISTENT: The instance is scheduled to be created.
+    PROVISIONING: This is the first Compute state after creating an instance.
+    STAGING:      The instance's virtual machine is being set up.
+    RUNNING:      The instance is running, but its startup scripts have not yet
+                  completed.
+    SNITCH_READY: The instance's startup scripts are done.
+    HADOOP_READY: The appropriate Hadoop daemons are running.
 
 Cluster states:
-  DOWN:        Only the coordinator is running, and no commands have been
-               issued.
-  DOOMED:      The coordinator is decomissioning instances.
-  BROKEN:      A permanent state indicating that hadoop-jobtracker or
-               hadoop-namenode is BROKEN.
-  DOWNLOADING: The coordinator is mirroring the Hadoop package and some other
-               code.
-  LAUNCHING:   Some instances exist, but Hadoop is not ready for use yet.
-  READY:       Hadoop is usable. Not all slaves may be HADOOP_READY, but enough
-               are.
+
+    DOWN:        Only the coordinator is running, and no commands have been
+                 issued.
+    DOOMED:      The coordinator is decomissioning instances.
+    BROKEN:      A permanent state indicating that hadoop-jobtracker or
+                 hadoop-namenode is BROKEN.
+    DOWNLOADING: The coordinator is mirroring the Hadoop package and some other
+                 code.
+    LAUNCHING:   Some instances exist, but Hadoop is not ready for use yet.
+    READY:       Hadoop is usable. Not all slaves may be HADOOP_READY, but enough
+                 are.
 
 # DEBUGGING #
 
-You can ssh into any instance. 'sudo su hadoop' will let you become the user
+You can ssh into any instance. `'sudo su hadoop'` will let you become the user
 that all agents run as. `/home/hadoop/log_*` may be useful.
 
 You may have to change hadoop_url in cfg.py to reflect an active Apache mirror.
