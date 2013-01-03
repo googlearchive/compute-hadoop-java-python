@@ -112,16 +112,12 @@ To import data:
 2. The coordinator forwards this request to a Hadoop instance, then returns an
    operation object, which the user can poll for progress.
 3. A Hadoop instance pushes the input from the web/GS into HDFS.
-
 To run jobs:
-
 4. The user sends a request to begin a MapReduce job to the coordinator,
    uploading the JAR file using the above process.
 5. The user can poll the status of Hadoop jobs, or set up an SSH tunnel to
    access the web UI of the Hadoop JobTracker directly.
-
 To export data:
-
 6. After a job is complete, the user can request that the coordinator exports
    data from HDFS into Google Storage.
 7. As before, the coordinator forwards this request to a Hadoop instance, then
