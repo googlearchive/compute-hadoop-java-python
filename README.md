@@ -43,9 +43,7 @@ exits with non-zero status.)
 - Set zone, machtype, image, and disk in tools/launch_coordinator.py
 - Set the GS bucket and your project ID in tools/common.py. You must set this
   bucket up too:
-
-	$ gsutil mb gs://bucket_name
-
+	`gsutil mb gs://bucket_name`
 - Edit hadoop/conf/hadoop-env.sh and tweak things like heap size.
 
 REGULAR OPERATION
