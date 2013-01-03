@@ -66,21 +66,21 @@ See below for an explanation of the states.
 
 The following describes what the above scripts do:
 
-1) The user launches a coordinator instance and provides it the rest of the
+1. The user launches a coordinator instance and provides it the rest of the
    code-base using Google Storage.
-2) The user polls an endpoint on the coordinator to know when it's ready, then
+2. The user polls an endpoint on the coordinator to know when it's ready, then
    issues a command to launch a Hadoop cluster.
-3) The coordinator launches many instances in parallel. Google Storage is used
+3. The coordinator launches many instances in parallel. Google Storage is used
    to share common configuration and scripts. Two are designated as the Hadoop
    masters: the NameNode and the JobTracker.
-4) The instances run their own REST agent, the "snitch," which the coordinator
+4. The instances run their own REST agent, the "snitch," which the coordinator
    polls to know when the instance is finished with setup.
-5) When the NameNode is ready, the JobTracker instance's Hadoop daemons can
+5. When the NameNode is ready, the JobTracker instance's Hadoop daemons can
    begin. When the JobTracker's daemon is running, all of the slaves can connect
    to the masters and join the cluster. When there are at least 3 slaves running
    (this depends on the desired replication value for HDFS), the cluster is
    considered ready for use.
-6) During this entire process, the user can poll the coordinator to get
+6. During this entire process, the user can poll the coordinator to get
    detailed progress.
 
 # Running MapReduce jobs #
@@ -106,22 +106,25 @@ Watch progress here through Hadoop's UI
 The following describes what the above scripts do:
 
 To import data:
-1) The user sends upload requests to the coordinator, specifying a public web
+
+1. The user sends upload requests to the coordinator, specifying a public web
    URL or a Google Storage URI of some input data.
-2) The coordinator forwards this request to a Hadoop instance, then returns an
+2. The coordinator forwards this request to a Hadoop instance, then returns an
    operation object, which the user can poll for progress.
-3) A Hadoop instance pushes the input from the web/GS into HDFS.
+3. A Hadoop instance pushes the input from the web/GS into HDFS.
 
 To run jobs:
-4) The user sends a request to begin a MapReduce job to the coordinator,
+
+4. The user sends a request to begin a MapReduce job to the coordinator,
    uploading the JAR file using the above process.
-5) The user can poll the status of Hadoop jobs, or set up an SSH tunnel to
+5. The user can poll the status of Hadoop jobs, or set up an SSH tunnel to
    access the web UI of the Hadoop JobTracker directly.
 
 To export data:
-6) After a job is complete, the user can request that the coordinator exports
+
+6. After a job is complete, the user can request that the coordinator exports
    data from HDFS into Google Storage.
-7) As before, the coordinator forwards this request to a Hadoop instance, then
+7. As before, the coordinator forwards this request to a Hadoop instance, then
    returns a pollable operation.
 
 # Performing other operations #
