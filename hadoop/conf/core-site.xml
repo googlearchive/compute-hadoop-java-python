@@ -8,4 +8,20 @@
     <name>fs.default.name</name>
     <value>hdfs://hadoop-namenode:9000</value>
   </property>
+  <property>
+    <name>fs.inmemory.size.mb</name>
+    <value>200</value>
+  </property>
+  <property>
+    <name>io.sort.factor</name>
+    <value>100</value>
+  </property>
+  <property>
+    <name>io.sort.mb</name>
+    <value>200</value>
+  </property>
+  <property>
+    <name>io.file.buffer.size</name>
+    <value>131072</value>
+  </property>
 </configuration>

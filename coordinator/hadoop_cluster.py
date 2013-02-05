@@ -23,6 +23,7 @@ import threading
 import time
 
 from cfg import cfg
+from gcelib import gce
 import gcelib.shortcuts as gce_shortcuts
 import util
 from util import InstanceState
@@ -152,22 +153,28 @@ class HadoopCluster(object):
       scope = cfg.rw_storage_scope
     else:
       scope = cfg.ro_storage_scope
-    resp = util.api.insert_instance(
-        name=name, zone=cfg.zone,
-        machineType=cfg.machine_type, image=cfg.image,
-        serviceAccounts=gce_shortcuts.service_accounts([scope]),
-        disks=disks,
-        metadata=gce_shortcuts.metadata({
-            'gs_bucket': cfg.gs_bucket,
-            'snitch-tarball.tgz': cfg.gs_snitch_tarball,
-            'startup-script': open('start_setup.sh').read(),
-            'bootstrap.sh': open('hadoop/bootstrap.sh').read(),
-            'snitch.py': open(snitch).read()
-        }),
-        networkInterfaces=network,
-        blocking=True
-    )
-    return not 'error' in resp
+    try:
+      resp = util.api.insert_instance(
+          name=name, zone=cfg.zone,
+          machineType=cfg.machine_type, image=cfg.image,
+          serviceAccounts=gce_shortcuts.service_accounts([scope]),
+          disks=disks,
+          metadata=gce_shortcuts.metadata({
+              # Key modified to avoid dots, which are disallowed in v1beta13.
+              'gs_bucket': cfg.gs_bucket,
+              'snitch-tarball_tgz': cfg.gs_snitch_tarball,
+              'startup-script': open('start_setup.sh').read(),
+              'bootstrap_sh': open('hadoop/bootstrap.sh').read(),
+              'snitch_py': open(snitch).read()
+          }),
+          networkInterfaces=network,
+          blocking=True
+      )
+    except gce.GceError as e:
+      logging.info('GCE exception inserting instance ' + name + ': ' + str(e))
+    except Exception as e:
+      logging.info('exception inserting instance ' + name + ': ' + str(e))
+    return True
 
   def new_slave_names(self, num):
     # Callers should assume these slaves will be created

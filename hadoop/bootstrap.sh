@@ -50,7 +50,8 @@ tar xzf snitch-tarball.tgz
 
 # Set up the REST agent
 sudo easy_install -H None -f bottle_install -U bottle
-wget ${MD}/snitch.py
+wget ${MD}/snitch_py
+mv snitch_py snitch.py
 chmod +x snitch.py
 
 # Setup Hadoop and start snitch
