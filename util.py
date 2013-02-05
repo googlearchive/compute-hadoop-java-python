@@ -31,7 +31,7 @@ import httplib2
 
 from cfg import cfg
 import gcelib.gce_util
-import gcelib.gce_v1beta12
+import gcelib.gce_v1beta13
 
 logging.basicConfig(
     level=logging.DEBUG,
@@ -59,7 +59,7 @@ def setup_api(service_account=True):
     creds = gcelib.gce_util.ServiceAccountCredentials()
   else:
     creds = gcelib.gce_util.get_credentials()
-  api = gcelib.gce_v1beta12.GoogleComputeEngine(
+  api = gcelib.gce_v1beta13.GoogleComputeEngine(
       creds, default_project=cfg.project_id,
       logging_level=logging.ERROR)
 

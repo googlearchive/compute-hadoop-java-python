@@ -62,7 +62,7 @@ def main():
       networkInterfaces=gce_shortcuts.network(),
       metadata=gce_shortcuts.metadata({
           'startup-script': open('start_setup.sh').read(),
-          'bootstrap.sh': open('coordinator/bootstrap.sh').read(),
+          'bootstrap_sh': open('coordinator/bootstrap.sh').read(),
           'tarball': cfg.gs_coordinators_tarball,
           'gs_bucket': cfg.gs_bucket,
           'zone': zone,

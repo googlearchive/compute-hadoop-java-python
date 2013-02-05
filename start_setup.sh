@@ -23,7 +23,7 @@ BOOTSTRAP="/home/${USERNAME}/bootstrap.sh"
 
 adduser ${USERNAME} --disabled-password --shell /bin/bash
 echo "${USERNAME} ALL=NOPASSWD: ALL" >> /etc/sudoers
-wget ${METADATA_URL}/bootstrap.sh -O ${BOOTSTRAP}
+wget ${METADATA_URL}/bootstrap_sh -O ${BOOTSTRAP}
 chown ${USERNAME} ${BOOTSTRAP}
 chmod +x ${BOOTSTRAP}
 

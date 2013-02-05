@@ -152,22 +152,26 @@ class HadoopCluster(object):
       scope = cfg.rw_storage_scope
     else:
       scope = cfg.ro_storage_scope
-    resp = util.api.insert_instance(
-        name=name, zone=cfg.zone,
-        machineType=cfg.machine_type, image=cfg.image,
-        serviceAccounts=gce_shortcuts.service_accounts([scope]),
-        disks=disks,
-        metadata=gce_shortcuts.metadata({
-            'gs_bucket': cfg.gs_bucket,
-            'snitch-tarball.tgz': cfg.gs_snitch_tarball,
-            'startup-script': open('start_setup.sh').read(),
-            'bootstrap.sh': open('hadoop/bootstrap.sh').read(),
-            'snitch.py': open(snitch).read()
-        }),
-        networkInterfaces=network,
-        blocking=True
-    )
-    return not 'error' in resp
+    try:
+      resp = util.api.insert_instance(
+          name=name, zone=cfg.zone,
+          machineType=cfg.machine_type, image=cfg.image,
+          serviceAccounts=gce_shortcuts.service_accounts([scope]),
+          disks=disks,
+          metadata=gce_shortcuts.metadata({
+              'gs_bucket': cfg.gs_bucket,
+              'snitch-tarball_tgz': cfg.gs_snitch_tarball,
+              'startup-script': open('start_setup.sh').read(),
+              'bootstrap_sh': open('hadoop/bootstrap.sh').read(),
+              'snitch_py': open(snitch).read()
+          }),
+          networkInterfaces=network,
+          blocking=True
+      )
+    except:
+      logging.info('exception thrown while inserting instance ' + name)
+      return False
+    return True
 
   def new_slave_names(self, num):
     # Callers should assume these slaves will be created

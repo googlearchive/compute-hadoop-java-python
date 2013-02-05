@@ -12,4 +12,16 @@
     <name>mapred.local.dir</name>
     <value>/mnt/hadoop/mapred</value>
   </property>
+  <property>
+    <name>mapred.child.java.opts</name>
+    <value>-Xmx1024m</value>
+  </property>
+  <property>
+    <name>mapred.reduce.parallel.copies</name>
+    <value>20</value>
+  </property>
+  <property>
+    <name>mapred.reduce.slowstart.completed.maps</name>
+    <value>.5</value>
+  </property>
 </configuration>

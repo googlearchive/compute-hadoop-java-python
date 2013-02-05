@@ -69,7 +69,8 @@ class Config(object):
     # Hadoop details
 
     self.hadoop_url = 'archive.apache.org/dist/hadoop/common'
-    self.hadoop_version = '1.0.3'
+    # Use latest stable version of Hadoop, as of 2/4/2013.
+    self.hadoop_version = '1.1.1'
     self.hadoop_fn = 'hadoop-{0}'.format(self.hadoop_version)
     self.hadoop_bin = '/home/hadoop/hadoop/bin/'
     # This is where ephemeral disk gets mounted. Note this location is hardcoded

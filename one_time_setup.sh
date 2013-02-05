@@ -17,6 +17,9 @@
 # If you need to get back to a clean state after running it, run:
 # rm -rf gcelib* tools/cfg.py tools/util.py tools/gcelib secret java/target hadoop-tools.jar *.pyc tools/*.pyc
 
+# Latest version of gcelib.
+GCELIB_VERS=0.3.0
+
 set -e
 
 if [ ! -f one_time_setup.sh ]; then
@@ -28,11 +31,11 @@ chmod +x tools/*.py
 chmod -x tools/common.py
 
 echo "Setting up gcelib..."
-wget --quiet http://google-compute-engine-tools.googlecode.com/files/gcelib-0.1.0.tar.gz
-tar xzf gcelib-0.1.0.tar.gz
-rm -f gcelib-0.1.0.tar.gz
-mv gcelib-0.1.0/gcelib real_gcelib
-rm -rf gcelib-0.1.0
+wget --quiet http://google-compute-engine-tools.googlecode.com/files/gcelib-$GCELIB_VERS.tar.gz
+tar xzf gcelib-$GCELIB_VERS.tar.gz
+rm -f gcelib-$GCELIB_VERS.tar.gz
+mv gcelib-$GCELIB_VERS/gcelib real_gcelib
+rm -rf gcelib-$GCELIB_VERS
 mv real_gcelib gcelib
 ln -s ../gcelib tools/gcelib
 ./tools/authorize_gce.py
