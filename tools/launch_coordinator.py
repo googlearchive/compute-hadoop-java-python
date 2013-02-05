@@ -61,6 +61,7 @@ def main():
                                                       cfg.rw_storage_scope]),
       networkInterfaces=gce_shortcuts.network(),
       metadata=gce_shortcuts.metadata({
+          # Key modified to avoid dots, which are disallowed in v1beta13.
           'startup-script': open('start_setup.sh').read(),
           'bootstrap_sh': open('coordinator/bootstrap.sh').read(),
           'tarball': cfg.gs_coordinators_tarball,

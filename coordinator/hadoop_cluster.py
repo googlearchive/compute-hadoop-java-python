@@ -23,6 +23,7 @@ import threading
 import time
 
 from cfg import cfg
+from gcelib import gce
 import gcelib.shortcuts as gce_shortcuts
 import util
 from util import InstanceState
@@ -159,6 +160,7 @@ class HadoopCluster(object):
           serviceAccounts=gce_shortcuts.service_accounts([scope]),
           disks=disks,
           metadata=gce_shortcuts.metadata({
+              # Key modified to avoid dots, which are disallowed in v1beta13.
               'gs_bucket': cfg.gs_bucket,
               'snitch-tarball_tgz': cfg.gs_snitch_tarball,
               'startup-script': open('start_setup.sh').read(),
@@ -168,9 +170,10 @@ class HadoopCluster(object):
           networkInterfaces=network,
           blocking=True
       )
-    except:
-      logging.info('exception thrown while inserting instance ' + name)
-      return False
+    except gce.GceError as e:
+      logging.info('GCE exception inserting instance ' + name + ': ' + str(e))
+    except Exception as e:
+      logging.info('exception inserting instance ' + name + ': ' + str(e))
     return True
 
   def new_slave_names(self, num):
